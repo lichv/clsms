@@ -1,0 +1,19 @@
+{
+    "name": "lichv/clsms",
+    "description": "chuanglan sms send api",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "lichv lee",
+            "email": "lichvg@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "php": ">=5.5.9"
+    },
+    "autoload": {
+        "psr-4": {"Clsms\\": "src/"}
+    }
+}
