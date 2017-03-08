@@ -2,6 +2,9 @@
 namespace Clsms;
 
 class Sms{
+	protected static $_instance = null;
+	public static $openurl='http://222.73.117.156/msg/HttpBatchSendSM?needstatus=true';
+
 	public static $config=[];
 	public static $state = array(
 					0    => array('state'=>200,	'msg'=>'提交成功', ),
@@ -26,19 +29,26 @@ class Sms{
 					120  => array('state'=>120, 'msg'=>'未知错误,请联系开发者.', ),
 				);
 
-	public function __construct(){
+	protected function __construct($config){
 		self::$config = $config;
 	}
 
+	public static function getInstance($config){
+		if (!isset(self::$_instance)) {
+			self::$_instance = new self($config);
+		}
+		return self::$_instance;
+	}
+
 	//发送消息
-	public function send($data){
+	public static function send($data){
 		if(empty($data['to'])|| empty($data['content'])){
 			return ['state'=>5001,'msg'=>'缺少参数'];
 		}
 		
 		$post_data = array();
 		$post_data['account'] = iconv('GB2312', 'GB2312', self::$config['account']);
-		$post_data['pswd'] = iconv('GB2312', 'GB2312', self::$config['passwd']);
+		$post_data['pswd'] = iconv('GB2312', 'GB2312', self::$config['password']);
 		$post_data['mobile'] = $data['to'];
 		$post_data['msg'] = mb_convert_encoding($data['content'],'UTF-8', 'auto');
 
@@ -52,7 +62,7 @@ class Sms{
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_POST, 1);
 		curl_setopt($ch, CURLOPT_HEADER, 0);
-		curl_setopt($ch, CURLOPT_URL, self::$config['url']);
+		curl_setopt($ch, CURLOPT_URL, self::$openurl);
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
 		$result = curl_exec($ch);
 
@@ -61,10 +71,10 @@ class Sms{
 		$r = explode(PHP_EOL,$res );
 		if( isset($r[0]) ) {
 			$tmp = explode(',',$r[0] );
-			if( isset($tmp[1]) && isset($this->state[$tmp[1]]) ){
-				return $this->state[$tmp[1]];
+			if( isset($tmp[1]) && isset(self::$state[$tmp[1]]) ){
+				return self::$state[$tmp[1]];
 			}
 		}
-		return $this->state[120];
+		return self::$state[120];
 	}
 }
