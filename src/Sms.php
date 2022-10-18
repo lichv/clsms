@@ -3,7 +3,7 @@ namespace Clsms;
 
 class Sms{
 	protected static $_instance = null;
-	public static $openurl='http://222.73.117.156/msg/HttpBatchSendSM?needstatus=true';
+	public static $openurl='https://smssh1.253.com/msg/send/encrypt/json';
 
 	public static $config=[];
 	public static $state = array(
